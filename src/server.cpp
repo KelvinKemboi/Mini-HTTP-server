@@ -28,7 +28,7 @@ int main() {
         "\r\n"
         "What's up! This is my simple practice server";
 
-    send(client, msg, 96, 0); //send response to client
+    send(client, msg, str_len(msg), 0); //send response to client
 
     //close both server and client
     close(client);
