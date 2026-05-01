@@ -21,6 +21,11 @@ int main() {
 
     int client=accept(server, nullptr, nullptr); //accept client- socket for client conneection
 
+    //read request
+    char buffer[4096]={}; //make a char array with size 4kb
+    recv(client, buffer, sizeof(buffer),0); //read client message and store in buffer
+    cout<<buffer<<"\n"; //print message stored
+    
     //response
     const char* msg =
         "HTTP/1.1 200 OK\r\n"
