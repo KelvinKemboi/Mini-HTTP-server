@@ -22,7 +22,8 @@ int main() {
 
     cout<<"Server listening on port 8080"<<endl;
 
-    int client=accept(server, nullptr, nullptr); //accept client- socket for client conneection
+    while(true){
+ int client=accept(server, nullptr, nullptr); //accept client- socket for client conneection
 
     //read request
     char buffer[4096]={}; //make a char array with size 4kb
@@ -71,6 +72,6 @@ int main() {
     //close both server and client
     close(client);
     close(server);
-
+    }
     return 0;
 }
