@@ -7,6 +7,16 @@
 #include <sstream> 
 using namespace std;
 
+//helper function to load different file types
+string getContentType(const string& path) {
+    if (path.ends_with(".html")) return "text/html";
+    if (path.ends_with(".css"))  return "text/css";
+    if (path.ends_with(".js"))   return "application/javascript";
+    if (path.ends_with(".png"))  return "image/png";
+    if (path.ends_with(".jpg"))  return "image/jpeg";
+    return "text/plain";
+}
+
 int main() {
     //creating socket-file descriptor
     int server=socket(AF_INET, SOCK_STREAM, 0);
@@ -55,14 +65,14 @@ int main() {
         stringstream ss;
         ss<<file.rdbuf();
         body=ss.str();
-        status="HTTP/1.1 200 OK\r\n";
+        status="HTTP/1.1 200 OK";
     } else {
         body="<h1>404 Not Found</h1>";
-        status="HTTP/1.1 404 Not Found\r\n";
+        status="HTTP/1.1 404 Not Found";
     }
 
     string response =
-        status+
+        status+ "\r\n"
         "Content-Type: text/html\r\n"
         "Content-Length: "+ to_string(body.size()) + "\r\n"
         "\r\n" + body;
@@ -71,7 +81,7 @@ int main() {
 
     //close both server and client
     close(client);
-    close(server);
     }
+    close(server);
     return 0;
 }
