@@ -73,7 +73,7 @@ int main() {
 
     string response =
         status+ "\r\n"
-        "Content-Type: text/html\r\n"
+        "Content-Type: "+getContentType(path)+"\r\n"
         "Content-Length: "+ to_string(body.size()) + "\r\n"
         "\r\n" + body;
 
