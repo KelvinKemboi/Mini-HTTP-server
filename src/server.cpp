@@ -23,7 +23,7 @@ int main() {
     cout<<"Server listening on port 8080"<<endl;
 
     while(true){
- int client=accept(server, nullptr, nullptr); //accept client- socket for client conneection
+    int client=accept(server, nullptr, nullptr); //accept client- socket for client conneection
 
     //read request
     char buffer[4096]={}; //make a char array with size 4kb
@@ -39,13 +39,13 @@ int main() {
     string method=firstline.substr(0, space); //everything till first space
     string path=firstline.substr(space+1, space2-space-1); //path
 
-    cout<<"Method: "<<method<<endl;
-    cout<<"Path: "<<path<<endl;
+    // cout<<"Method: "<<method<<endl;
+    // cout<<"Path: "<<path<<endl;
     if (path == "/") {
         path = "/index.html";
     }
     //Hardcoded HTTP response
-    string file_path="public"+path;
+    string file_path="/home/kemboi/projects/http-server/public"+path;
     ifstream file(file_path); //open file
 
     //handling errors
