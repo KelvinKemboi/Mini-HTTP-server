@@ -3,6 +3,8 @@
 #include <netinet/in.h> //network structs- for address
 #include <unistd.h> //close
 #include <string>
+#include <fstream> //file handling
+#include <sstream> 
 using namespace std;
 
 int main() {
@@ -38,12 +40,29 @@ int main() {
 
     cout<<"Method: "<<method<<endl;
     cout<<"Path: "<<path<<endl;
-
+    if (path == "/") {
+        path = "/index.html";
+    }
     //Hardcoded HTTP response
-    string body="What's up! This is my simple practice server";
+    string file_path="public"+path;
+    ifstream file(file_path); //open file
+
+    //handling errors
+    string body;
+    string status;
+    if(file) {
+        stringstream ss;
+        ss<<file.rdbuf();
+        body=ss.str();
+        status="HTTP/1.1 200 OK\r\n";
+    } else {
+        body="<h1>404 Not Found</h1>";
+        status="HTTP/1.1 404 Not Found\r\n";
+    }
+
     string response =
-        "HTTP/1.1 200 OK\r\n"
-        "Content-Type: text/plain\r\n"
+        status+
+        "Content-Type: text/html\r\n"
         "Content-Length: "+ to_string(body.size()) + "\r\n"
         "\r\n" + body;
 
