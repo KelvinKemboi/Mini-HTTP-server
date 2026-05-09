@@ -36,50 +36,52 @@ int main() {
     while(true){
         int client=accept(server, nullptr, nullptr); //accept client- socket for client conneection
 
-        //read request
-        char buffer[4096]={}; //make a char array with size 4kb
-        recv(client, buffer, sizeof(buffer),0); //read client message and store in buffer
-        cout<<"Message from client: "<<buffer<<endl; //print message stored
+        //talk to multiple  
+        while(true){
+            //read request
+            char buffer[4096]={}; //make a char array with size 4kb
+            recv(client, buffer, sizeof(buffer),0); //read client message and store in buffer
+            cout<<"Message from client: "<<buffer<<endl; //print message stored
 
-        string request(buffer); //turns into string
-        
-        string firstline= request.substr(0, request.find("\r\n")); //firstline
-        size_t space=firstline.find(' '); //first space before path
-        size_t space2=firstline.find(' ', space+1); //second space after path
+            string request(buffer); //turns into string
+            
+            string firstline= request.substr(0, request.find("\r\n")); //firstline
+            size_t space=firstline.find(' '); //first space before path
+            size_t space2=firstline.find(' ', space+1); //second space after path
 
-        string method=firstline.substr(0, space); //everything till first space
-        string path=firstline.substr(space+1, space2-space-1); //path
+            string method=firstline.substr(0, space); //everything till first space
+            string path=firstline.substr(space+1, space2-space-1); //path
 
-        // cout<<"Method: "<<method<<endl;
-        // cout<<"Path: "<<path<<endl;
-        if (path=="/") {
-            path="/index.html";
+            // cout<<"Method: "<<method<<endl;
+            // cout<<"Path: "<<path<<endl;
+            if (path=="/") {
+                path="/index.html";
+            }
+            //Hardcoded HTTP response
+            string file_path="/home/kemboi/projects/http-server/public"+path;
+            ifstream file(file_path); //open file
+
+            //handling errors
+            string body;
+            string status;
+            if(file) {
+                stringstream ss;
+                ss<<file.rdbuf();
+                body=ss.str();
+                status="HTTP/1.1 200 OK";
+            } else {
+                body="<h1>404 Not Found</h1>";
+                status="HTTP/1.1 404 Not Found";
+            }
+
+            string response =
+                status+ "\r\n"
+                "Content-Type: "+getContentType(path)+"\r\n"
+                "Content-Length: "+ to_string(body.size()) + "\r\n"
+                "\r\n" + body;
+
+            send(client, response.c_str(), response.size(), 0); //convert repsonse into s-string and send to client
         }
-        //Hardcoded HTTP response
-        string file_path="/home/kemboi/projects/http-server/public"+path;
-        ifstream file(file_path); //open file
-
-        //handling errors
-        string body;
-        string status;
-        if(file) {
-            stringstream ss;
-            ss<<file.rdbuf();
-            body=ss.str();
-            status="HTTP/1.1 200 OK";
-        } else {
-            body="<h1>404 Not Found</h1>";
-            status="HTTP/1.1 404 Not Found";
-        }
-
-        string response =
-            status+ "\r\n"
-            "Content-Type: "+getContentType(path)+"\r\n"
-            "Content-Length: "+ to_string(body.size()) + "\r\n"
-            "\r\n" + body;
-
-        send(client, response.c_str(), response.size(), 0); //convert repsonse into s-string and send to client
-
         //close both server and client
         close(client);
     }
