@@ -38,9 +38,16 @@ int main() {
 
         //read request
         char buffer[4096]={}; //make a char array with size 4kb
-        recv(client, buffer, sizeof(buffer),0); //read client message and store in buffer
-        cout<<"Message from client: "<<buffer<<endl; //print message stored
+        int bytes=recv(client, buffer, sizeof(buffer)-1,0); //read client message and store in buffer
+        
+        //error handling for recv
+        if(bytes<=0){
+            close(client);
+            continue;
+        }
+        cout<<"Message from client: "<<buffer<<endl; //print message stored  
 
+        buffer[bytes]='\0';
         string request(buffer); //turns into string
         
         string firstline= request.substr(0, request.find("\r\n")); //firstline
